@@ -172,15 +172,20 @@ export async function configFromCLIOptions(cliOptions: CLIOptions): Promise<Conf
   if (cliOptions.blockServiceWorkers)
     contextOptions.serviceWorkers = 'block';
 
+  const browser: Config['browser'] = {
+    isolated: cliOptions.isolated,
+    userDataDir: cliOptions.userDataDir,
+    launchOptions,
+    contextOptions,
+    cdpEndpoint: cliOptions.cdpEndpoint,
+  };
+
+  // Only include browserName in the config if it was explicitly specified via CLI
+  if (cliOptions.browser !== undefined)
+    browser.browserName = browserName;
+
   const result: Config = {
-    browser: {
-      browserName,
-      isolated: cliOptions.isolated,
-      userDataDir: cliOptions.userDataDir,
-      launchOptions,
-      contextOptions,
-      cdpEndpoint: cliOptions.cdpEndpoint,
-    },
+    browser,
     server: {
       port: cliOptions.port,
       host: cliOptions.host,
